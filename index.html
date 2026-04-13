@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DESIGN-R 2020</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Pressure Ulcer Score Helper</p>
+          <h1>DESIGN-R<sup>&reg;</sup> 2020</h1>
+          <p class="hero-text">
+            各項目を選ぶと、DESIGN-R表記と総点数を自動計算します。カルテ向けの文章をそのままコピーできます。
+          </p>
+        </div>
+        <div class="hero-score">
+          <div class="score-card">
+            <div class="score-card-head">
+              <p class="score-label">総点数</p>
+              <button class="action ghost action-compact" id="resetAll" type="button">リセット</button>
+            </div>
+            <p class="score-value" id="totalScore">0</p>
+            <p class="score-note">Depthの点数は合計に含めません</p>
+          </div>
+          <div class="score-card">
+            <p class="score-label">DESIGN-R表記</p>
+            <p class="score-code" id="notationPreview">d0-e0s0i0g0n0p0:0点</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>評価情報</h2>
+            <p>評価日と部位のみ入力します。</p>
+          </div>
+
+          <div class="grid two-col">
+            <label class="field">
+              <span>評価日</span>
+              <input id="assessedOn" type="date" />
+            </label>
+            <label class="field">
+              <span>部位</span>
+              <input id="location" type="text" placeholder="例：仙骨部、左大腿部" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>DESIGN-R入力</h2>
+            <p>SizeとPocketは、点数を直接選ぶ方法と、cm入力で自動計算する方法の両方に対応しています。</p>
+          </div>
+
+          <div class="score-grid">
+            <article class="metric-card">
+              <div class="metric-head">
+                <h3>Depth</h3>
+                <p>深さ</p>
+              </div>
+              <label class="field">
+                <span>評価</span>
+                <select id="depth"></select>
+              </label>
+              <p class="metric-footnote">深さの点数は総点数に加算しません。</p>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-head">
+                <h3>Exudate</h3>
+                <p>滲出液</p>
+              </div>
+              <label class="field">
+                <span>評価</span>
+                <select id="exudate"></select>
+              </label>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-head">
+                <h3>Size</h3>
+                <p>大きさ</p>
+              </div>
+              <label class="field">
+                <span>点数</span>
+                <select id="sizeScore"></select>
+              </label>
+              <div class="dimension-grid">
+                <label class="field">
+                  <span>長径(cm)</span>
+                  <input id="woundLong" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 4.0" />
+                </label>
+                <label class="field">
+                  <span>短径(cm)</span>
+                  <input id="woundShort" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 3.0" />
+                </label>
+              </div>
+              <p class="helper" id="sizeHelper">面積を入力すると、推奨点数を表示します。</p>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-head">
+                <h3>Inflammation / Infection</h3>
+                <p>炎症 / 感染</p>
+              </div>
+              <label class="field">
+                <span>評価</span>
+                <select id="inflammation"></select>
+              </label>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-head">
+                <h3>Granulation</h3>
+                <p>肉芽組織</p>
+              </div>
+              <label class="field">
+                <span>評価</span>
+                <select id="granulation"></select>
+              </label>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-head">
+                <h3>Necrotic Tissue</h3>
+                <p>壊死組織</p>
+              </div>
+              <label class="field">
+                <span>評価</span>
+                <select id="necrosis"></select>
+              </label>
+            </article>
+
+            <article class="metric-card pocket-card">
+              <div class="metric-head">
+                <h3>Pocket</h3>
+                <p>ポケット</p>
+              </div>
+              <label class="field">
+                <span>点数</span>
+                <select id="pocketScore"></select>
+              </label>
+              <div class="dimension-grid">
+                <label class="field">
+                  <span>ポケット込み長径(cm)</span>
+                  <input id="pocketLong" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 6.0" />
+                </label>
+                <label class="field">
+                  <span>ポケット込み短径(cm)</span>
+                  <input id="pocketShort" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 5.0" />
+                </label>
+              </div>
+              <p class="helper" id="pocketHelper">ポケット面積 = ポケット込み面積 - 創面積 で自動計算します。</p>
+            </article>
+          </div>
+
+          <label class="field memo-field">
+            <span>メモ</span>
+            <textarea
+              id="memo"
+              rows="5"
+              placeholder="例：創周囲発赤あり。局所熱感あり。滲出液増加。"
+            ></textarea>
+          </label>
+        </section>
+
+        <section class="panel output-panel">
+          <div class="panel-head">
+            <h2>出力</h2>
+            <p>短いスコア表記と、カルテ向け文章の2種類を用意しました。</p>
+          </div>
+
+          <div class="output-box">
+            <div class="output-head">
+              <h3>スコア表記</h3>
+              <button class="action ghost" id="copyNotation" type="button">コピー</button>
+            </div>
+            <textarea id="notationOutput" class="output-text" rows="2" readonly></textarea>
+          </div>
+
+          <div class="output-box">
+            <div class="output-head">
+              <h3>カルテ貼り付け用</h3>
+              <div class="button-row">
+                <button class="action ghost" id="copyChartText" type="button">コピー</button>
+              </div>
+            </div>
+            <textarea id="chartOutput" class="output-text large" rows="8" readonly></textarea>
+          </div>
+
+          <div class="status-row">
+            <span id="copyStatus" aria-live="polite"></span>
+            <span class="storage-note">入力内容はこのブラウザに保存されます。</span>
+          </div>
+        </section>
+
+        <section class="panel reference-panel">
+          <div class="panel-head">
+            <h2>判定メモ</h2>
+          </div>
+          <ul class="reference-list">
+            <li>Sizeは長径 × 長径と直交する最大径で計算します。</li>
+            <li>Pocketは「ポケット全周面積 - 潰瘍面積」で計算します。</li>
+            <li>Inflammation / Infectionの「I3C」は臨界的定着疑いです。</li>
+            <li>Depthの「DDTI」「DU」は公式表記どおり合計点に含めません。</li>
+          </ul>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>
+          DESIGN-R<sup>&reg;</sup> 2020 の項目定義は日本褥瘡学会公開資料をもとに実装しています。
+        </p>
+        <p class="footer-links">
+          <a href="https://www.jspu.org/medical/design-r/" target="_blank" rel="noreferrer">日本褥瘡学会</a>
+          <span>/</span>
+          <a href="https://jspu.org/medical/books/docs/design-r2020_doc.pdf" target="_blank" rel="noreferrer">コンセンサス・ドキュメント</a>
+        </p>
+      </footer>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
